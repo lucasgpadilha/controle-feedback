@@ -145,8 +145,7 @@ describe('FeedbackController', () => {
         descricao: 'Test description',
         tipo: 'bug'
       })).to.be.true;
-      expect(mockRes.writeHead.calledWith(302, { 
-        'Location': '/?success=1',
+      expect(mockRes.writeHead.calledWith(200, { 
         'Content-Type': 'text/html; charset=utf-8'
       })).to.be.true;
     });
@@ -194,8 +193,7 @@ describe('FeedbackController', () => {
       await controller.update(mockReq, mockRes);
 
       expect(updateStatusStub.calledWith('1', 'em análise')).to.be.true;
-      expect(mockRes.writeHead.calledWith(302, { 
-        'Location': '/feedbacks/1',
+      expect(mockRes.writeHead.calledWith(200, { 
         'Content-Type': 'text/html; charset=utf-8'
       })).to.be.true;
     });

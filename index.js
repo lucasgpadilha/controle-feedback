@@ -27,8 +27,8 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    // Parse do body para requisições POST
-    if (req.method === 'POST') {
+    // Parse do body para requisições POST e PUT
+    if (req.method === 'POST' || req.method === 'PUT') {
       await parseRequestBody(req, res);
     }
 
@@ -107,64 +107,94 @@ async function serveStaticFile(req, res, pathname) {
   }
 }
 
-// Função para parse do body das requisições POST
+// Função para parse do body das requisições POST e PUT
 async function parseRequestBody(req, res) {
   return new Promise((resolve, reject) => {
     const contentType = req.headers['content-type'] || '';
     
-    if (contentType.includes('application/x-www-form-urlencoded')) {
-      // Parse URL-encoded data
-      let body = '';
-      req.on('data', chunk => {
-        body += chunk.toString();
-      });
-      req.on('end', () => {
-        req.body = {};
-        if (body) {
-          const params = new URLSearchParams(body);
-          for (const [key, value] of params.entries()) {
-            req.body[key] = value;
+    // Suportar POST e PUT
+    if (req.method === 'POST' || req.method === 'PUT') {
+      if (contentType.includes('application/x-www-form-urlencoded')) {
+        // Parse URL-encoded data
+        let body = '';
+        req.on('data', chunk => {
+          body += chunk.toString();
+        });
+        req.on('end', () => {
+          req.body = {};
+          if (body) {
+            const params = new URLSearchParams(body);
+            for (const [key, value] of params.entries()) {
+              req.body[key] = value;
+            }
           }
-        }
-        resolve();
-      });
-      req.on('error', reject);
+          resolve();
+        });
+        req.on('error', reject);
+      } else if (contentType.includes('application/json')) {
+        // Parse JSON data
+        let body = '';
+        req.on('data', chunk => {
+          body += chunk.toString();
+        });
+        req.on('end', () => {
+          if (body) {
+            try {
+              req.body = JSON.parse(body);
+            } catch (error) {
+              console.error('Erro ao parsear JSON:', error);
+              reject(error);
+              return;
+            }
+          } else {
+            req.body = {};
+          }
+          resolve();
+        });
+        req.on('error', reject);
+      } else {
+        // Parse multipart/form-data with formidable
+        const form = formidable({
+          maxFileSize: 5 * 1024 * 1024, // 5MB max
+          keepExtensions: true
+        });
+
+        form.parse(req, (err, fields, files) => {
+          if (err) {
+            console.error('Erro ao parsear body:', err);
+            reject(err);
+            return;
+          }
+
+          // Converte fields para req.body
+          req.body = {};
+          for (const [key, value] of Object.entries(fields)) {
+            // formidable retorna arrays, pega o primeiro valor
+            req.body[key] = Array.isArray(value) ? value[0] : value;
+          }
+
+          resolve();
+        });
+      }
     } else {
-      // Parse multipart/form-data with formidable
-      const form = formidable({
-        maxFileSize: 5 * 1024 * 1024, // 5MB max
-        keepExtensions: true
-      });
-
-      form.parse(req, (err, fields, files) => {
-        if (err) {
-          console.error('Erro ao parsear body:', err);
-          reject(err);
-          return;
-        }
-
-        // Converte fields para req.body
-        req.body = {};
-        for (const [key, value] of Object.entries(fields)) {
-          // formidable retorna arrays, pega o primeiro valor
-          req.body[key] = Array.isArray(value) ? value[0] : value;
-        }
-
-        resolve();
-      });
+      resolve();
     }
   });
 }
 
+let csrfCleanupInterval;
+let sessionCleanupInterval;
+
 // Inicia limpeza periódica de tokens CSRF expirados (a cada 5 minutos)
-setInterval(() => {
+csrfCleanupInterval = setInterval(() => {
   CSRFMiddleware.cleanExpiredTokens();
 }, 5 * 60 * 1000);
 
 // Inicia limpeza periódica de sessões expiradas (a cada 10 minutos)
-setInterval(() => {
+sessionCleanupInterval = setInterval(() => {
   authMiddleware.cleanExpiredSessions();
 }, 10 * 60 * 1000);
+
 
 // Inicia o servidor
 server.listen(PORT, HOST, () => {
@@ -190,21 +220,27 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('🛑 Recebido SIGTERM, encerrando servidor...');
+function gracefulShutdown(signal) {
+  console.log(`\n🛑 Recebido ${signal}, encerrando servidor...`);
+  
+  // Limpar intervals
+  if (csrfCleanupInterval) clearInterval(csrfCleanupInterval);
+  if (sessionCleanupInterval) clearInterval(sessionCleanupInterval);
+  
+  // Fechar servidor com timeout
   server.close(() => {
     console.log('✅ Servidor encerrado');
     process.exit(0);
   });
-});
+  
+  // Forçar encerramento após 5 segundos
+  setTimeout(() => {
+    console.log('⚠️ Forçando encerramento...');
+    process.exit(1);
+  }, 5000);
+}
 
-process.on('SIGINT', () => {
-  console.log('\n🛑 Recebido SIGINT, encerrando servidor...');
-  server.close(() => {
-    console.log('✅ Servidor encerrado');
-    process.exit(0);
-  });
-});
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 module.exports = server;

@@ -84,6 +84,54 @@
                             Atualizar Status
                         </button>
                     </form>
+
+                    <script>
+                    document.querySelector('.status-form').addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        
+                        const formData = new FormData(e.target);
+                        const data = {
+                            id: formData.get('id'),
+                            status: formData.get('status')
+                        };
+                        
+                        // Mostrar loading no botão
+                        const submitBtn = e.target.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+                        submitBtn.textContent = 'Atualizando...';
+                        submitBtn.disabled = true;
+                        
+                        try {                            
+                            const response = await fetch('/feedback/atualizar', {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(data),
+                                credentials: 'include'
+                            });
+                            
+
+                            if (response.status === 200) {
+                                // Sucesso - recarregar página
+                                alert('Feedback atualizado com sucesso!');
+                                window.location.reload();
+                            } else {
+                                // Erro 
+                                console.error('Erro:', response.status, response.statusText);
+                                alert('Erro ao atualizar feedback: ' + response.status);
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                            
+                        } catch (error) {
+                            console.error('Erro:', error);
+                            alert('Erro ao atualizar feedback: ' + error.message);
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                    </script>
                 </div>
             </div>
 

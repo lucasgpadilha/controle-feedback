@@ -1,0 +1,25 @@
+feat: refatoração index, bind auth nas rotas, adicionado verificações no router e criação do README
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Wed Oct 15 19:36:32 2025 +0200
+# Committer: root <root@vmi2529032.contaboserver.net>
+#
+# interactive rebase in progress; onto 77e39a4
+# Last commands done (5 commands done):
+#    edit 55a025c feat: criar schema.sql e migrations
+#    edit 4ec1953 feat: adicionar model Feedback com CRUD
+# No commands remaining.
+# You are currently editing a commit while rebasing branch 'master' on '77e39a4'.
+#
+# Changes to be committed:
+#	new file:   README.md
+#	new file:   cookies.txt
+#	new file:   index.js
+#	modified:   rotas.js
+#	modified:   src/helpers/router.js
+#
+# Untracked files:
+#	scripts/
+#

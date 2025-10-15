@@ -53,8 +53,8 @@ router.addRoute('GET', '/feedbacks/:id', feedbackController.show.bind(feedbackCo
   authMiddleware.requireAuth.bind(authMiddleware)
 ]);
 
-// POST /feedback/atualizar - Atualiza status
-router.addRoute('POST', '/feedback/atualizar', feedbackController.update.bind(feedbackController), [
+// PUT /feedback/atualizar - Atualiza status
+router.addRoute('PUT', '/feedback/atualizar', feedbackController.update.bind(feedbackController), [
   authMiddleware.requireAuth.bind(authMiddleware)
 ]);
 

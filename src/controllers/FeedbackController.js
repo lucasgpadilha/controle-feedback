@@ -146,37 +146,33 @@ class FeedbackController {
       const result = await this.feedback.create({ titulo, descricao, tipo });
       
       // Redireciona para página de sucesso
-      res.writeHead(302, { 
-        'Location': '/?success=1',
+      res.writeHead(200, { 
         'Content-Type': 'text/html; charset=utf-8'
       });
-      res.end(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Feedback Enviado</title>
-          <meta charset="utf-8">
-        </head>
-        <body>
-          <h1>Feedback enviado com sucesso!</h1>
-          <p>ID do feedback: ${result.id}</p>
-          <p><a href="/">Enviar outro feedback</a></p>
-        </body>
-        </html>
-      `);
+      res.end();
       
     } catch (error) {
       console.error('Erro ao criar feedback:', error);
-      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('Erro interno do servidor');
+      res.writeHead(302, { 
+        'Location': '/?error=1',
+        'Content-Type': 'text/html; charset=utf-8'
+      });
+      res.end();
     } finally {
       await this.feedback.close();
     }
   }
 
-  // POST /feedback/atualizar - Atualiza status (PROTEGIDA)
+  // PUT /feedback/atualizar - Atualiza status (PROTEGIDA)
   async update(req, res) {
     try {
+      // Verificar se req.body existe
+      if (!req.body) {
+        res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Dados não recebidos');
+        return;
+      }
+
       const { id, status } = req.body;
       
       if (!id || !status) {
@@ -195,18 +191,26 @@ class FeedbackController {
       }
 
       // Redireciona de volta para o feedback
-      res.writeHead(302, { 
-        'Location': `/feedbacks/${id}`,
+      res.writeHead(200, { 
         'Content-Type': 'text/html; charset=utf-8'
       });
       res.end();
       
+      // Fechar conexão após resposta
+      await this.feedback.close();
+      
     } catch (error) {
       console.error('Erro ao atualizar feedback:', error);
+      
+      // Fechar conexão em caso de erro
+      try {
+        await this.feedback.close();
+      } catch (closeError) {
+        console.error('Erro ao fechar conexão:', closeError);
+      }
+      
       res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Erro interno do servidor');
-    } finally {
-      await this.feedback.close();
     }
   }
 }

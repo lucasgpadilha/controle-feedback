@@ -77,5 +77,44 @@
             <p><a href="/login">Área Administrativa</a></p>
         </footer>
     </div>
+    <script>
+        document.querySelector('.feedback-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+        
+          const form = e.target;
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+        
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const originalText = submitBtn.textContent;
+          submitBtn.textContent = 'Enviando...';
+          submitBtn.disabled = true;
+        
+          try {
+            const response = await fetch('/feedback/cadastrar', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
+        
+            if (response.ok) {
+              // sucesso -> alerta e redireciona
+              alert('✅ Feedback enviado com sucesso!');
+              window.location.reload();
+            } else {
+              const err = await response.text();
+              console.error('Erro ao enviar feedback:', err);
+              alert('❌ Erro ao enviar feedback. Tente novamente.');
+            }
+        
+          } catch (err) {
+            console.error('Erro:', err);
+            alert('❌ Erro de conexão. Verifique sua rede.');
+          }
+        
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        });
+    </script>
 </body>
 </html>
