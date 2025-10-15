@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "migrate": "node db/migrations/001_create_feedbacks_table.js",
     "seed": "node db/seed.js",
-    "test": "mocha --recursive --exit",
+    "test": "mocha tests --recursive --exit",
     "lint": "eslint . || true"
   },
   "keywords": ["feedback", "csrf", "nodejs", "sqlite"],
