@@ -241,9 +241,6 @@ curl http://localhost:3000/feedbacks -b cookies.txt
 3. Adicione middlewares necessários (auth, CSRF, etc.)
 4. Crie testes para a nova funcionalidade
 
-## Licença
-
-MIT License - veja arquivo LICENSE para detalhes.
 
 ---
 

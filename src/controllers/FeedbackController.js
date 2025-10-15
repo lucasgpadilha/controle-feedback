@@ -149,7 +149,18 @@ class FeedbackController {
       res.writeHead(200, { 
         'Content-Type': 'text/html; charset=utf-8'
       });
-      res.end();
+      res.end(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Formulário enviado com sucesso</title>
+            <meta charset="utf-8">
+          </head>
+          <body>
+            <h1>Tudo ok!</h1>
+          </body>
+          </html>
+        `);
       
     } catch (error) {
       console.error('Erro ao criar feedback:', error);
