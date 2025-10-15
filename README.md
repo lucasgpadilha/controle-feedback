@@ -83,9 +83,6 @@ O servidor estará disponível em `http://localhost:3000`
 ```bash
 # Execute todos os testes
 npm test
-
-# Execute linting (opcional)
-npm run lint
 ```
 
 ## Estrutura do Projeto
@@ -142,7 +139,7 @@ controle-feedback/
 - `POST /logout` - Logout
 - `GET /feedbacks` - Lista todos os feedbacks
 - `GET /feedbacks/:id` - Mostra feedback específico
-- `POST /feedback/atualizar` - Atualiza status do feedback
+- `PUT /feedback/atualizar` - Atualiza status do feedback
 
 ## Credenciais
 
@@ -232,7 +229,7 @@ curl http://localhost:3000/feedbacks -b cookies.txt
 - `npm run migrate` - Executa migrations
 - `npm run seed` - Popula banco com dados de exemplo
 - `npm test` - Executa testes unitários
-- `npm run lint` - Executa ESLint
+
 
 ### Adicionando Novas Rotas
 
