@@ -108,7 +108,12 @@ class Router {
   // Executa um middleware
   async executeMiddleware(middleware, req, res) {
     return new Promise((resolve, reject) => {
+      let nextCalled = false;
+      
       const next = (err) => {
+        if (nextCalled) return; // Evita chamadas duplas
+        nextCalled = true;
+        
         if (err) {
           reject(err);
         } else {
@@ -120,13 +125,22 @@ class Router {
         const result = middleware(req, res, next);
         // Se middleware retorna Promise, aguarda
         if (result && typeof result.then === 'function') {
-          result.then(resolve).catch(reject);
-        } else if (result === undefined) {
+          result.then(() => {
+            if (!nextCalled) {
+              nextCalled = true;
+              resolve();
+            }
+          }).catch(reject);
+        } else if (result === undefined && !nextCalled) {
           // Middleware não chamou next(), assume que enviou resposta
+          nextCalled = true;
           resolve();
         }
       } catch (error) {
-        reject(error);
+        if (!nextCalled) {
+          nextCalled = true;
+          reject(error);
+        }
       }
     });
   }

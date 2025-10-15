@@ -21,12 +21,12 @@ router.addRoute('GET', '/', feedbackController.form.bind(feedbackController), [
 
 // GET /login - Formulário de login
 router.addRoute('GET', '/login', authController.showLogin.bind(authController), [
-  authMiddleware.publicRoute
+  authMiddleware.publicRoute.bind(authMiddleware)
 ]);
 
 // POST /login - Processa login
 router.addRoute('POST', '/login', authController.login.bind(authController), [
-  authMiddleware.publicRoute
+  authMiddleware.publicRoute.bind(authMiddleware)
 ]);
 
 // ===== ROTAS SEMI-PÚBLICAS (CSRF) =====
@@ -40,22 +40,22 @@ router.addRoute('POST', '/feedback/cadastrar', feedbackController.store.bind(fee
 
 // POST /logout - Logout
 router.addRoute('POST', '/logout', authController.logout.bind(authController), [
-  authMiddleware.requireAuth
+  authMiddleware.requireAuth.bind(authMiddleware)
 ]);
 
 // GET /feedbacks - Lista todos os feedbacks
 router.addRoute('GET', '/feedbacks', feedbackController.index.bind(feedbackController), [
-  authMiddleware.requireAuth
+  authMiddleware.requireAuth.bind(authMiddleware)
 ]);
 
 // GET /feedbacks/:id - Mostra feedback específico
 router.addRoute('GET', '/feedbacks/:id', feedbackController.show.bind(feedbackController), [
-  authMiddleware.requireAuth
+  authMiddleware.requireAuth.bind(authMiddleware)
 ]);
 
 // POST /feedback/atualizar - Atualiza status
 router.addRoute('POST', '/feedback/atualizar', feedbackController.update.bind(feedbackController), [
-  authMiddleware.requireAuth
+  authMiddleware.requireAuth.bind(authMiddleware)
 ]);
 
 module.exports = router;
