@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Feedback</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema de Controle de Feedback</h1>
+            <p>Envie seu feedback, sugestão ou reporte um bug</p>
+        </header>
+
+        <main>
+            <div class="form-container">
+                <h2>Enviar Feedback</h2>
+                
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="success-message">
+                        <p>✅ Feedback enviado com sucesso!</p>
+                    </div>
+                <% } %>
+
+                <form action="/feedback/cadastrar" method="POST" class="feedback-form">
+                    <!-- Campo CSRF obrigatório -->
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    
+                    <div class="form-group">
+                        <label for="titulo">Título *</label>
+                        <input type="text" id="titulo" name="titulo" required 
+                               placeholder="Ex: Erro ao salvar dados">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descricao">Descrição *</label>
+                        <textarea id="descricao" name="descricao" required rows="4"
+                                  placeholder="Descreva detalhadamente seu feedback..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="bug">🐛 Bug - Problema encontrado</option>
+                            <option value="sugestão">💡 Sugestão - Melhoria proposta</option>
+                            <option value="reclamação">😠 Reclamação - Insatisfação</option>
+                            <option value="feedback">💬 Feedback - Comentário geral</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+                        <button type="reset" class="btn btn-secondary">Limpar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="info-section">
+                <h3>Como funciona?</h3>
+                <ul>
+                    <li>📝 <strong>Bug:</strong> Reporte problemas que encontrou</li>
+                    <li>💡 <strong>Sugestão:</strong> Proponha melhorias</li>
+                    <li>😠 <strong>Reclamação:</strong> Expresse insatisfações</li>
+                    <li>💬 <strong>Feedback:</strong> Comentários gerais</li>
+                </ul>
+                
+                <p class="security-note">
+                    🔒 <strong>Segurança:</strong> Este formulário está protegido contra ataques CSRF.
+                </p>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Sistema de Controle de Feedback. Todos os direitos reservados.</p>
+            <p><a href="/login">Área Administrativa</a></p>
+        </footer>
+    </div>
+</body>
+</html>

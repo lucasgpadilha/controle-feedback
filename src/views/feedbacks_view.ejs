@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Feedbacks - Administração</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Administração - Feedbacks</h1>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">Novo Feedback</a>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main>
+            <div class="stats-section">
+                <h2>Estatísticas</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3><%= feedbacks.length %></h3>
+                        <p>Total de Feedbacks</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><%= feedbacks.filter(f => f.status === 'recebido').length %></h3>
+                        <p>Recebidos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><%= feedbacks.filter(f => f.status === 'em análise').length %></h3>
+                        <p>Em Análise</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><%= feedbacks.filter(f => f.status === 'finalizado').length %></h3>
+                        <p>Finalizados</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedbacks-section">
+                <h2>Lista de Feedbacks</h2>
+                
+                <% if (feedbacks.length === 0) { %>
+                    <div class="empty-state">
+                        <p>Nenhum feedback encontrado.</p>
+                        <a href="/" class="btn btn-primary">Criar primeiro feedback</a>
+                    </div>
+                <% } else { %>
+                    <div class="table-container">
+                        <table class="feedbacks-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% feedbacks.forEach(feedback => { %>
+                                    <tr>
+                                        <td><%= feedback.id %></td>
+                                        <td class="title-cell">
+                                            <strong><%= feedback.titulo %></strong>
+                                        </td>
+                                        <td>
+                                            <span class="tipo-badge tipo-<%= feedback.tipo %>">
+                                                <% if (feedback.tipo === 'bug') { %>🐛<% } %>
+                                                <% if (feedback.tipo === 'sugestão') { %>💡<% } %>
+                                                <% if (feedback.tipo === 'reclamação') { %>😠<% } %>
+                                                <% if (feedback.tipo === 'feedback') { %>💬<% } %>
+                                                <%= feedback.tipo %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-<%= feedback.status.replace(' ', '-') %>">
+                                                <%= feedback.status %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <%= new Date(feedback.created_at).toLocaleDateString('pt-BR') %>
+                                        </td>
+                                        <td>
+                                            <a href="/feedbacks/<%= feedback.id %>" class="btn btn-sm btn-primary">
+                                                Ver Detalhes
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Sistema de Controle de Feedback. Área Administrativa.</p>
+        </footer>
+    </div>
+</body>
+</html>

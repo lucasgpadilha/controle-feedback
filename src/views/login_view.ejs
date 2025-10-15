@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Administração</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="login-card">
+                <header class="login-header">
+                    <h1>🔐 Login Administrativo</h1>
+                    <p>Sistema de Controle de Feedback</p>
+                </header>
+
+                <main class="login-content">
+                    <form action="/login" method="POST" class="login-form">
+                        <div class="form-group">
+                            <label for="usuario">Usuário:</label>
+                            <input type="text" id="usuario" name="usuario" required 
+                                   placeholder="Digite seu usuário" autocomplete="username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senha">Senha:</label>
+                            <input type="password" id="senha" name="senha" required 
+                                   placeholder="Digite sua senha" autocomplete="current-password">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-full">
+                                Entrar
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="login-info">
+                        <h3>Credenciais de Teste</h3>
+                        <div class="credentials">
+                            <p><strong>Usuário:</strong> admin</p>
+                            <p><strong>Senha:</strong> 123456</p>
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="login-footer">
+                    <p><a href="/">← Voltar ao formulário público</a></p>
+                    <p class="security-note">
+                        🔒 Acesso restrito a administradores
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

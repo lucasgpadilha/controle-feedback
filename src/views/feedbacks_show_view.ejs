@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback #<%= feedback.id %> - Administração</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Detalhes do Feedback</h1>
+            <div class="header-actions">
+                <a href="/feedbacks" class="btn btn-secondary">← Voltar à Lista</a>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main>
+            <div class="feedback-detail">
+                <div class="feedback-header">
+                    <h2>Feedback #<%= feedback.id %></h2>
+                    <div class="feedback-meta">
+                        <span class="tipo-badge tipo-<%= feedback.tipo %>">
+                            <% if (feedback.tipo === 'bug') { %>🐛<% } %>
+                            <% if (feedback.tipo === 'sugestão') { %>💡<% } %>
+                            <% if (feedback.tipo === 'reclamação') { %>😠<% } %>
+                            <% if (feedback.tipo === 'feedback') { %>💬<% } %>
+                            <%= feedback.tipo %>
+                        </span>
+                        <span class="status-badge status-<%= feedback.status.replace(' ', '-') %>">
+                            <%= feedback.status %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="feedback-content">
+                    <div class="field-group">
+                        <label>Título:</label>
+                        <div class="field-value"><%= feedback.titulo %></div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Descrição:</label>
+                        <div class="field-value description-text">
+                            <%= feedback.descricao.replace(/\n/g, '<br>') %>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Data de Criação:</label>
+                        <div class="field-value">
+                            <%= new Date(feedback.created_at).toLocaleString('pt-BR') %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-actions">
+                    <h3>Atualizar Status</h3>
+                    <form action="/feedback/atualizar" method="POST" class="status-form">
+                        <input type="hidden" name="id" value="<%= feedback.id %>">
+                        
+                        <div class="form-group">
+                            <label for="status">Novo Status:</label>
+                            <select id="status" name="status" required>
+                                <option value="recebido" <%= feedback.status === 'recebido' ? 'selected' : '' %>>
+                                    📥 Recebido
+                                </option>
+                                <option value="em análise" <%= feedback.status === 'em análise' ? 'selected' : '' %>>
+                                    🔍 Em Análise
+                                </option>
+                                <option value="em desenvolvimento" <%= feedback.status === 'em desenvolvimento' ? 'selected' : '' %>>
+                                    ⚙️ Em Desenvolvimento
+                                </option>
+                                <option value="finalizado" <%= feedback.status === 'finalizado' ? 'selected' : '' %>>
+                                    ✅ Finalizado
+                                </option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Atualizar Status
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <a href="/feedbacks" class="btn btn-secondary">← Voltar à Lista</a>
+                <a href="/" class="btn btn-outline">Criar Novo Feedback</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Sistema de Controle de Feedback. Área Administrativa.</p>
+        </footer>
+    </div>
+</body>
+</html>
